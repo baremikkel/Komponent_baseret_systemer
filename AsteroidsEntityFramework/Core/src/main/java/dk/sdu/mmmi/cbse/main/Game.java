@@ -7,11 +7,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import dk.sdu.mmmi.cbse.asteroidsystem.AsteroidControlSystem;
 import dk.sdu.mmmi.cbse.asteroidsystem.AsteroidPlugin;
+import dk.sdu.mmmi.cbse.collionsystem.CollisionDetection;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
+import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
 import dk.sdu.mmmi.cbse.enemysystem.Enemy;
 import dk.sdu.mmmi.cbse.enemysystem.EnemyControlSystem;
 import dk.sdu.mmmi.cbse.enemysystem.EnemyPlugin;
@@ -31,6 +33,7 @@ public class Game
     private final GameData gameData = new GameData();
     private List<IEntityProcessingService> entityProcessors = new ArrayList<>();
     private List<IGamePluginService> entityPlugins = new ArrayList<>();
+    private List<IPostEntityProcessingService> entityPostProcessors = new ArrayList<>();
     private World world = new World();
 
     @Override
@@ -67,6 +70,8 @@ public class Game
         entityPlugins.add(asteroidPlugin);
         entityProcessors.add(asteroidProcess);
 
+        entityPostProcessors.add(new CollisionDetection());
+
 
         // Lookup all Game Plugins using ServiceLoader
         for (IGamePluginService iGamePlugin : entityPlugins) {
@@ -82,9 +87,7 @@ public class Game
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         gameData.setDelta(Gdx.graphics.getDeltaTime());
-
         update();
-
         draw();
 
         gameData.getKeys().update();
@@ -94,6 +97,9 @@ public class Game
         // Update
         for (IEntityProcessingService entityProcessorService : entityProcessors) {
             entityProcessorService.process(gameData, world);
+        }
+        for (IPostEntityProcessingService postEntityProcessingService: entityPostProcessors) {
+            postEntityProcessingService.process(gameData, world);
         }
     }
 
