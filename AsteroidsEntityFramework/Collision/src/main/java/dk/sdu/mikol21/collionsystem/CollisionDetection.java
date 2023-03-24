@@ -1,4 +1,4 @@
-package dk.sdu.mmmi.cbse.collionsystem;
+package dk.sdu.mikol21.collionsystem;
 
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
