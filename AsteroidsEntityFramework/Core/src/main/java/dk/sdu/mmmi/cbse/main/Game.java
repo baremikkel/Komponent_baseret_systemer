@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import dk.sdu.mmmi.cbse.asteroidsystem.AsteroidControlSystem;
+import dk.sdu.mmmi.cbse.asteroidsystem.AsteroidPlugin;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
@@ -49,13 +51,23 @@ public class Game
 
         IGamePluginService playerPlugin = new PlayerPlugin();
         IGamePluginService enemyPlugin = new EnemyPlugin();
+        IGamePluginService asteroidPlugin = new AsteroidPlugin();
 
         IEntityProcessingService playerProcess = new PlayerControlSystem();
         IEntityProcessingService enemyProcess = new EnemyControlSystem();
+        IEntityProcessingService asteroidProcess = new AsteroidControlSystem();
+
+
         entityPlugins.add(playerPlugin);
         entityProcessors.add(playerProcess);
+
         entityPlugins.add(enemyPlugin);
         entityProcessors.add(enemyProcess);
+
+        entityPlugins.add(asteroidPlugin);
+        entityProcessors.add(asteroidProcess);
+
+
         // Lookup all Game Plugins using ServiceLoader
         for (IGamePluginService iGamePlugin : entityPlugins) {
             iGamePlugin.start(gameData, world);
@@ -92,6 +104,8 @@ public class Game
                 sr.setColor(1, 1, 1, 1);
             else if(entity.getClass() == Enemy.class)
                 sr.setColor(1, 0.5f, 1, 1);
+            else
+                sr.setColor(0.1f, 0.3f, 0.7f, 1);
 
             sr.begin(ShapeRenderer.ShapeType.Line);
 

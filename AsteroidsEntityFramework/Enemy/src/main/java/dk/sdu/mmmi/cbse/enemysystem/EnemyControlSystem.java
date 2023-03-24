@@ -37,13 +37,6 @@ public class EnemyControlSystem implements IEntityProcessingService {
                 movingPart.setUp(false);
             }
 
-
-
-//            movingPart.setLeft(gameData.getKeys().isDown(LEFT));
-//            movingPart.setRight(gameData.getKeys().isDown(RIGHT));
-
-
-
             movingPart.process(gameData, enemy);
             positionPart.process(gameData, enemy);
 
