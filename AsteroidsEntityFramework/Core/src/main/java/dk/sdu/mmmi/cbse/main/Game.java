@@ -10,7 +10,11 @@ import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
+import dk.sdu.mmmi.cbse.enemysystem.Enemy;
+import dk.sdu.mmmi.cbse.enemysystem.EnemyControlSystem;
+import dk.sdu.mmmi.cbse.enemysystem.EnemyPlugin;
 import dk.sdu.mmmi.cbse.managers.GameInputProcessor;
+import dk.sdu.mmmi.cbse.playersystem.Player;
 import dk.sdu.mmmi.cbse.playersystem.PlayerControlSystem;
 import dk.sdu.mmmi.cbse.playersystem.PlayerPlugin;
 import java.util.ArrayList;
@@ -44,10 +48,14 @@ public class Game
         );
 
         IGamePluginService playerPlugin = new PlayerPlugin();
+        IGamePluginService enemyPlugin = new EnemyPlugin();
 
         IEntityProcessingService playerProcess = new PlayerControlSystem();
+        IEntityProcessingService enemyProcess = new EnemyControlSystem();
         entityPlugins.add(playerPlugin);
         entityProcessors.add(playerProcess);
+        entityPlugins.add(enemyPlugin);
+        entityProcessors.add(enemyProcess);
         // Lookup all Game Plugins using ServiceLoader
         for (IGamePluginService iGamePlugin : entityPlugins) {
             iGamePlugin.start(gameData, world);
@@ -80,7 +88,10 @@ public class Game
     private void draw() {
         for (Entity entity : world.getEntities()) {
 
-            sr.setColor(1, 1, 1, 1);
+            if (entity.getClass() == Player.class)
+                sr.setColor(1, 1, 1, 1);
+            else if(entity.getClass() == Enemy.class)
+                sr.setColor(1, 0.5f, 1, 1);
 
             sr.begin(ShapeRenderer.ShapeType.Line);
 
