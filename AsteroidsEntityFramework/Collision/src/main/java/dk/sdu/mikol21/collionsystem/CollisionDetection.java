@@ -3,6 +3,7 @@ package dk.sdu.mikol21.collionsystem;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
+import dk.sdu.mmmi.cbse.common.data.entityparts.LifePart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
 
@@ -10,13 +11,29 @@ public class CollisionDetection implements IPostEntityProcessingService {
 
     @Override
     public void process(GameData gameData, World world) {
-        for (Entity entity: world.getEntities()) {
-            for (Entity entityN: world.getEntities()) {
-                if (entity.getID().equals(entityN.getID())) {
-                    continue;
-                }
-                if (this.hasCollided(entity, entityN)){
+        for (Entity entity : world.getEntities()) {
+            for (Entity collisionDetection : world.getEntities()) {
+                // get life parts on all entities
+                LifePart entityLife = entity.getPart(LifePart.class);
 
+                // if the two entities are identical, skip the iteration
+                if (entity.getID().equals(collisionDetection.getID())) {
+                    continue;
+
+                    // remove entities with zero in expiration
+                }
+
+                // CollisionDetection
+                if (this.hasCollided(entity, collisionDetection)) {
+                    // if entity has been hit, and should have its life reduced
+                    if (entityLife.getLife() > 0) {
+                        entityLife.setLife(entityLife.getLife() - 1);
+                        entityLife.setIsHit(true);
+                        // if entity is out of life - remove
+                        if (entityLife.getLife() <= 0) {
+                            world.removeEntity(entity);
+                        }
+                    }
                 }
             }
         }
@@ -29,9 +46,8 @@ public class CollisionDetection implements IPostEntityProcessingService {
         float dx = entityMovement1.getX() - entityMovement2.getX();
         float dy =  entityMovement1.getY() - entityMovement2.getY();
 
-        float distance = (float) Math.sqrt(dx*dx+dy*dy);
+        float distance = (float) Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
         if (distance < (entity.getRadius() + entity2.getRadius())) {
-            System.out.println("Collision between: "+entity.getName() +" & "+ entity2.getName()+ " Distance: "+distance);
             return true;
         }
         return false;

@@ -3,52 +3,61 @@ package dk.sdu.mikol21.asteroidsystem;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
+import dk.sdu.mmmi.cbse.common.data.entityparts.LifePart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.MovingPart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 
 public class AsteroidControlSystem implements IEntityProcessingService {
+
+    private IAsteroidSplitter asteroidSplitter = new AsteroidSplitterImpl();
+
     @Override
     public void process(GameData gameData, World world) {
         for (Entity asteroid : world.getEntities(Asteroid.class)) {
             PositionPart positionPart = asteroid.getPart(PositionPart.class);
             MovingPart movingPart = asteroid.getPart(MovingPart.class);
+            LifePart lifePart = asteroid.getPart(LifePart.class);
 
+            int numPoints = 12;
+            float speed = (float) Math.random() * 10f + 20f;
+            if (lifePart.getLife() == 1) {
+                numPoints = 8;
+                speed = (float) Math.random() * 30f + 70f;
+            } else if (lifePart.getLife() == 2) {
+                numPoints = 10;
+                speed = (float) Math.random() * 10f + 50f;
+            }
+            movingPart.setSpeed(speed);
             movingPart.setUp(true);
 
             movingPart.process(gameData, asteroid);
             positionPart.process(gameData, asteroid);
 
-            updateShape(asteroid);
+            // Split event
+            if (lifePart.isHit()) {
+                asteroidSplitter.createSplitAsteroid(asteroid, world);
+            }
+            updateShape(asteroid, numPoints);
         }
     }
 
-    private void updateShape(Entity asteroid) {
-        float[] shapex = asteroid.getShapeX();
-        float[] shapey = asteroid.getShapeY();
-        PositionPart positionPart = asteroid.getPart(PositionPart.class);
-        float x = positionPart.getX();
-        float y = positionPart.getY();
-        float radians = positionPart.getRadians();
-        float constant = 20;
+    private void updateShape(Entity asteroid, int numPoints) {
+        PositionPart position = asteroid.getPart(PositionPart.class);
+        float[] shapex = new float[numPoints];
+        float[] shapey = new float[numPoints];
+        float radians = position.getRadians();
+        float x = position.getX();
+        float y = position.getY();
+        float radius = asteroid.getRadius();
 
-        shapex[0] = (float) (x + Math.cos(radians) * constant);
-        shapey[0] = (float) (y + Math.sin(radians) * constant);
+        float angle = 0;
 
-        shapex[1] = (float) (x + Math.cos(radians - 2 * Math.PI / 6) * constant);
-        shapey[1] = (float) (y + Math.sin(radians - 2 * Math.PI / 6) * constant);
-
-        shapex[2] = (float) (x + Math.cos(radians - 4 * Math.PI / 6) * constant);
-        shapey[2] = (float) (y + Math.sin(radians - 4 * Math.PI / 6) * constant);
-
-        shapex[3] = (float) (x + Math.cos(radians + Math.PI) * constant);
-        shapey[3] = (float) (y + Math.sin(radians + Math.PI) * constant);
-
-        shapex[4] = (float) (x + Math.cos(radians + 4 * Math.PI / 6) * constant);
-        shapey[4] = (float) (y + Math.sin(radians + 4 * Math.PI / 6) * constant);
-
-        shapex[5] = (float) (x + Math.cos(radians + 2 * Math.PI / 6) * constant);
-        shapey[5] = (float) (y + Math.sin(radians + 2 * Math.PI / 6) * constant);
+        for (int i = 0; i < numPoints; i++) {
+            shapex[i] = x + (float) Math.cos(angle + radians) * radius;
+            shapey[i] = y + (float) Math.sin(angle + radians) * radius;
+            angle += 2 * 3.1415f / numPoints;
+        }
 
         asteroid.setShapeX(shapex);
         asteroid.setShapeY(shapey);
