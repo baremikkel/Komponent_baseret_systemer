@@ -17,10 +17,11 @@ public class CollisionDetection implements IPostEntityProcessingService {
                 LifePart entityLife = entity.getPart(LifePart.class);
 
                 // if the two entities are identical, skip the iteration
-                if (entity.getID().equals(collisionDetection.getID())) {
+                if (entity.getID().equals(collisionDetection.getID()) ||
+                (entity instanceof Bullet && collisionDetection instanceof Player)
+                (entity instanceof Player && collisionDetection instanceof Bullet) ||
+                        (entity instanceof Bullet && collisionDetection instanceof Bullet)){
                     continue;
-
-                    // remove entities with zero in expiration
                 }
 
                 // CollisionDetection
