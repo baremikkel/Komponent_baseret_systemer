@@ -1,11 +1,13 @@
 package dk.sdu.mikol21.collionsystem;
 
+import dk.sdu.mikol21.bulletsystem.Bullet;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.data.entityparts.LifePart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
+import dk.sdu.mmmi.cbse.playersystem.Player;
 
 public class CollisionDetection implements IPostEntityProcessingService {
 
@@ -18,7 +20,7 @@ public class CollisionDetection implements IPostEntityProcessingService {
 
                 // if the two entities are identical, skip the iteration
                 if (entity.getID().equals(collisionDetection.getID()) ||
-                (entity instanceof Bullet && collisionDetection instanceof Player)
+                (entity instanceof Bullet && collisionDetection instanceof Player) ||
                 (entity instanceof Player && collisionDetection instanceof Bullet) ||
                         (entity instanceof Bullet && collisionDetection instanceof Bullet)){
                     continue;
