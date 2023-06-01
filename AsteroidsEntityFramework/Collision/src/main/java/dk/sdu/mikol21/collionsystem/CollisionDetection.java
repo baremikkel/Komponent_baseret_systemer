@@ -1,13 +1,11 @@
 package dk.sdu.mikol21.collionsystem;
 
-import dk.sdu.mikol21.bulletsystem.Bullet;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.data.entityparts.LifePart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
-import dk.sdu.mmmi.cbse.playersystem.Player;
 
 public class CollisionDetection implements IPostEntityProcessingService {
 
@@ -15,28 +13,13 @@ public class CollisionDetection implements IPostEntityProcessingService {
     public void process(GameData gameData, World world) {
         for (Entity entity : world.getEntities()) {
             for (Entity collisionDetection : world.getEntities()) {
-                // get life parts on all entities
-                LifePart entityLife = entity.getPart(LifePart.class);
-
-                // if the two entities are identical, skip the iteration
-                if (entity.getID().equals(collisionDetection.getID()) ||
-                (entity instanceof Bullet && collisionDetection instanceof Player) ||
-                (entity instanceof Player && collisionDetection instanceof Bullet) ||
-                        (entity instanceof Bullet && collisionDetection instanceof Bullet)){
+                if(entity.getID().equals(collisionDetection.getID())){
                     continue;
                 }
+                LifePart entityLifePart = entity.getPart(LifePart.class);
 
-                // CollisionDetection
-                if (this.hasCollided(entity, collisionDetection)) {
-                    // if entity has been hit, and should have its life reduced
-                    if (entityLife.getLife() > 0) {
-                        entityLife.setLife(entityLife.getLife() - 1);
-                        entityLife.setIsHit(true);
-                        // if entity is out of life - remove
-                        if (entityLife.getLife() <= 0) {
-                            world.removeEntity(entity);
-                        }
-                    }
+                if (entityLifePart.getLife() > 0 && this.hasCollided(entity, collisionDetection)) {
+                    entityLifePart.setIsHit(true);
                 }
             }
         }

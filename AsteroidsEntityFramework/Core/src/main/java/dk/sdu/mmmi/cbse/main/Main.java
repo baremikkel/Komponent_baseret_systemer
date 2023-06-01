@@ -1,28 +1,26 @@
 package dk.sdu.mmmi.cbse.main;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class Main {
-	
-	public static void main(String[] args) {
 
-		LwjglApplicationConfiguration cfg =
-			new LwjglApplicationConfiguration();
-		cfg.title = "Asteroids";
-		cfg.width = 500;
-		cfg.height = 400;
-		cfg.useGL30 = false;
-		cfg.resizable = false;
+    public static void main(String[] args) {
+
+        Lwjgl3ApplicationConfiguration cfg =
+                new Lwjgl3ApplicationConfiguration();
+        cfg.setTitle("Asteroids");
+        cfg.setWindowedMode(500, 400);
+        cfg.setResizable(false);
 
 
-		AnnotationConfigApplicationContext application = new AnnotationConfigApplicationContext();
-		application.scan("dk.sdu.mmmi.cbse.main");
-		application.refresh();
+        AnnotationConfigApplicationContext application = new AnnotationConfigApplicationContext();
+        application.scan("dk.sdu.mmmi.cbse.main");
+        application.refresh();
 
-		new LwjglApplication((ApplicationListener) application.getBean("game"), cfg);
-	}
-	
+        new Lwjgl3Application((ApplicationListener) application.getBean("game"), cfg);
+    }
+
 }

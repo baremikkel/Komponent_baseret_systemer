@@ -32,6 +32,34 @@ public class MovingPart
         this.rotationSpeed = rotationSpeed;
     }
 
+    public float getDeceleration() {
+        return deceleration;
+    }
+
+    public float getAcceleration() {
+        return acceleration;
+    }
+
+    public float getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public float getRotationSpeed() {
+        return rotationSpeed;
+    }
+
+    public boolean isLeft() {
+        return left;
+    }
+
+    public boolean isRight() {
+        return right;
+    }
+
+    public boolean isUp() {
+        return up;
+    }
+
     public float getDx() {
         return dx;
     }
